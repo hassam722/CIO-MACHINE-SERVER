@@ -1,5 +1,4 @@
 channels==4.0.0
 Django==4.2.6
-django_channels==0.7.0
 daphne==4.0.0
 whitenoise==6.6.0
