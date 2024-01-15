@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]>      <html class="no-js"> <!--<![endif]-->
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Users</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        {% load static %}
+        <link rel="stylesheet" href="{% static 'user.css' %}">
+    </head>
+    <body>
+        <script>var user_clicked = false;</script>
+        <div class="users_div">
+            <div class="first">
+                <div class="inside_first">
+                    {% if users_list %}
+                        {% for user in users_list %}
+                            <div class="user_item">
+                                <div class="img_div">
+                                    <img src="{% static 'image/account.png' %}" alt="">
+                                </div>
+                                <div class="name_div">
+                                    <a href="{{user.name}}">{{user.name}}</a>
+                                    <p>Id:{{user.id}} | NFC:{{user.nfc}}</p>
+                                    <p>Itx Solution employee</p>
+                                </div>
+                            </div>
+                        {% endfor %}
+                            
+                    {% elif message %}
+                        <div class="user_msg_div">
+                            <p>{{ message }}</p>
+                        </div>    
+                    {% endif %}
+                    
+                
+                </div>
+            </div>
+            <div class="second">
+                <div class="add_div">
+                    <img src="{% static 'image/plus.png'%}" alt="">
+                    <a onclick="popup()">Add</a>
+                </div>
+            </div>
+        </div>
+        <div class="data_div">
+            <div class="child">
+                <div class="option_div">                    
+                    <a onclick="Day_click()" class="D_btn">D</a>
+                    <a onclick="Week_click()" class="W_btn">W</a>
+                    <a onclick="Month_click()" class="M_btn">M</a>
+                    <a onclick="Year_click()" class="Y_btn">Y</a>
+                </div>
+                <div class="data" id="one_day_data">
+                    {% if one_day_data %}
+                        <div class="_data" id="day_child">
+                            <div class="in_out_date">
+                                <div class="_in">
+                                    <div class="time_and_in">
+                                        <strong>In</strong><br>
+                                        <p id="check_in_time">{{one_day_data.checkintime}}</p>
+                                    </div>
+                                </div>
+                                <div class="_out">
+                                    <div class="time_and_out">
+                                        <strong>Out</strong>
+                                        <p id="check_out_time">{{one_day_data.checkouttime}}</p>
+                                    </div>
+                                </div>
+                                <div class="date">
+                                    <div class="date_and_date">
+                                        <strong>Date</strong>
+                                        <p id="date_tag">{{one_day_data.date}}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="hours">
+                                <div class="inside_hr_div">
+                                    <strong>Hours</strong>
+                                    <p id="hour_tag">{{one_day_data.timediff}}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <script>user_clicked = true;</script>
+                    {% else %}
+                        <div class="click_msg_div">
+                            <p>please Click on the user</p>
+                        </div>    
+                    {% endif %}
+                    
+                   
+                </div>
+                <div class="data" id="custom_data">
+                </div>
+            </div>
+        </div>
+        <div class="modal" id="myModal">
+            <div id="popup-window">
+                <div>
+                    {% csrf_token %}
+                    <h2>UserName:</h2>
+                    <input type="text" class = "firstname" id="firstname" name="firstname" placeholder="First Name" required>
+                    <input type="text" class = "lastname" id="lastname" name="lastname" placeholder="Last Name" required>
+                </div>
+                <div class="close_and_continue_btn">
+                    <a id="close-button" onclick="close_btn_click()">Close</a>
+                    <a id="continue-button" onclick="submit_btn_click()">Submit</a>
+                </div>
+            </div>
+        </div>
+        <script>
+            var token = document.cookie.split('=');
+            var header_value = 'header-check'
+            var value_to_check = "function-request"
+            
+
+            var D_btn = document.querySelector('.D_btn')
+            var W_btn = document.querySelector('.W_btn')
+            var M_btn = document.querySelector('.M_btn')
+            var Y_btn = document.querySelector('.Y_btn')
+
+            var one_day_div = document.getElementById("one_day_data");
+            var custom_data = document.getElementById("custom_data");
+            var child_div = document.getElementById("day_child");
+            
+            one_day_div.style.display = "block";
+            custom_data.style.display = "none";
+        
+            var popupWindow =document.getElementById("myModal");
+            var closeButton = document.getElementById("close-button");
+           
+            function popup(){
+                popupWindow.style.display = "block";
+            }
+            // Hide the pop-up window when the close button is clicked
+            function close_btn_click() {
+                popupWindow.style.display = "none";
+            };
+
+            function submit_btn_click(){
+                var first_name = document.getElementById("firstname")
+                var last_name = document.getElementById("lastname")
+
+                var firstname = first_name.value
+                var lastname = last_name.value   
+                if(firstname==""||lastname==""){
+                    alert("please enter the username")
+                    close_btn_click()
+                    return
+                } 
+                
+                var data_to_send = {"firstname":firstname,"lastname":lastname}
+                fetch('/add-user', {
+                        method: 'POST',
+                        headers: {
+                            "header-check":value_to_check,
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': token[1],  // Include the CSRF token if required
+                        },
+                        body:JSON.stringify(data_to_send)
+                    })
+                    .then(response => response.json())
+                    .then(data_dic => {
+                        // Handle the response from Django (if any)
+                        //console.log(data_dic);
+                        alert(data_dic["0"]);
+                        if(data_dic["0"]=="Successfull"){
+                            location.reload();
+                        }
+                    })
+                    .catch(error => {
+                        console.error(error);
+                    });
+                    close_btn_click()
+                
+            };
+    
+            
+
+            function change_background_all_btn(){
+                D_btn.style.background="lightblue";
+                W_btn.style.background="lightblue";
+                M_btn.style.background="lightblue";
+                Y_btn.style.background="lightblue";
+            }
+
+            function Day_click(){
+                change_background_all_btn();
+                D_btn.style.background="#c4d9f7";
+                if(user_clicked){
+                    one_day_div.style.display = "block";
+                    custom_data.style.display = "none";
+                }
+
+
+            }
+
+            function Week_click(){ 
+                change_background_all_btn();
+                W_btn.style.background ="#c4d9f7";
+                if(user_clicked){
+                    one_day_div.style.display = "none";
+                    custom_data.style.display = "block";
+                    custom_data.innerHTML="";
+                    var path = window.location.pathname;
+                    fetch('/week-data ', {
+                        method: 'GET',
+                        headers: {
+                            "header-check":value_to_check,
+                            "username":path,
+                            'Content-Type': 'application/json',
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data_dic => {
+                        // Handle the response from Django (if any)
+                        //console.log(data_dic);
+                        for (let key in data_dic){
+                            child_div = child_div.cloneNode(true)
+                            child_div.getElementsByTagName("p").check_in_time.textContent=data_dic[key].checkintime
+                            child_div.getElementsByTagName("p").check_out_time.textContent=data_dic[key].checkouttime
+                            child_div.getElementsByTagName("p").date_tag.textContent=data_dic[key].date
+                            child_div.getElementsByTagName("p").hour_tag.textContent=data_dic[key].timediff
+
+                            custom_data.appendChild(child_div)
+            
+                        };
+                    })
+                    .catch(error => {
+                        //console.error(error);
+                    });
+                }
+
+                    
+
+
+            };
+
+
+            
+
+        
+        
+            function Month_click(){
+                change_background_all_btn();
+                M_btn.style.background ="#c4d9f7";
+
+
+            
+                /// to check data is already fetched or not
+                if(user_clicked){
+                    one_day_div.style.display = "none";
+                    custom_data.style.display = "block";
+                    custom_data.innerHTML="";
+                    var path = window.location.pathname;
+                    fetch('/month-data ', {
+                        method: 'GET',
+                        headers: {
+                            "header-check":value_to_check,
+                            "username":path,
+                            'Content-Type': 'application/json',
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data_dic => {
+                        // Handle the response from Django (if any)
+                        //console.log(data_dic);
+                        for (let key in data_dic){
+                            child_div = child_div.cloneNode(true)
+                            child_div.getElementsByTagName("p").check_in_time.textContent=data_dic[key].checkintime
+                            child_div.getElementsByTagName("p").check_out_time.textContent=data_dic[key].checkouttime
+                            child_div.getElementsByTagName("p").date_tag.textContent=data_dic[key].date
+                            child_div.getElementsByTagName("p").hour_tag.textContent=data_dic[key].timediff
+
+                            custom_data.appendChild(child_div)
+            
+                        };
+                    })
+                    .catch(error => {
+                        //console.error(error);
+                    });
+                }
+            };
+
+            function Year_click(){
+                change_background_all_btn();
+                Y_btn.style.background ="#c4d9f7";
+            
+                /// to check data is already fetched or not
+                if(user_clicked){
+                    one_day_div.style.display = "none";
+                    custom_data.style.display = "block";
+                    custom_data.innerHTML="";
+                    var path = window.location.pathname;
+                    fetch('/year-data ', {
+                        method: 'GET',
+                        headers: {
+                            "header-check":value_to_check,
+                            "username":path,
+                            'Content-Type': 'application/json',
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data_dic => {
+                        // Handle the response from Django (if any)
+                        //console.log(data_dic);
+                        for (let key in data_dic){
+                            child_div = child_div.cloneNode(true)
+                            child_div.getElementsByTagName("p").check_in_time.textContent=data_dic[key].checkintime
+                            child_div.getElementsByTagName("p").check_out_time.textContent=data_dic[key].checkouttime
+                            child_div.getElementsByTagName("p").date_tag.textContent=data_dic[key].date
+                            child_div.getElementsByTagName("p").hour_tag.textContent=data_dic[key].timediff
+
+                            custom_data.appendChild(child_div)
+            
+                        };
+                    })
+                    .catch(error => {
+                        //console.error(error);
+                    });
+                }
+
+            };
+        </script>
+    </body>
+</html>
