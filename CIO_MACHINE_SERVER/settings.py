@@ -12,9 +12,9 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 import os,json
-from . import config
 
-FILE = json.loads(config)
+with open("config.json","r") as config:
+    FILE = json.load(config)
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
