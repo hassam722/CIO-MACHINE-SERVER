@@ -9,7 +9,7 @@ class machineConsumer(WebsocketConsumer):
         self.accept()
         
     def receive(self, text_data=None, bytes_data=None):
-        print(text_data)
+        # print(text_data)
         json_data = json.loads(text_data)
 
         if(json_data.get(CHECK)==CHECKIN):
@@ -18,7 +18,7 @@ class machineConsumer(WebsocketConsumer):
                 msg =checkin(nfc_num)
                 self.send(msg)
             else:
-                print(createmsg(101))
+                # print(createmsg(101))
                 # self.send(createmsg(101))
                 self.send(str("1"))
         elif(json_data.get(CHECK)==CHECKOUT):
@@ -27,7 +27,7 @@ class machineConsumer(WebsocketConsumer):
                 msg =checkout(nfc_num)
                 self.send(msg)
             else:
-                print(createmsg(101))
+                # print(createmsg(101))
                 # self.send(createmsg(101))
                 self.send(str("1"))
         elif(json_data.get(CHECK)==OPENDOOR):
@@ -36,7 +36,7 @@ class machineConsumer(WebsocketConsumer):
                 # self.send(createmsg(102))
                 self.send(str("2"))
             else:
-                print(createmsg(101))
+                # print(createmsg(101))
                 # self.send(createmsg(101))
                 self.send(str("1"))
         elif(json_data.get(CHECK)==ADDUSER):
