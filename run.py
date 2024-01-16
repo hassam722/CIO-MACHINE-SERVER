@@ -3,7 +3,7 @@ import sys,os,json
 import subprocess
 from venv import EnvBuilder
 from pathlib import Path
-with open("config.json","r") as json_file:
+with open("CIO_MACHINE_SERVER\\config.json","r") as json_file:
     FILE = json.loads(json_file)
 
 
