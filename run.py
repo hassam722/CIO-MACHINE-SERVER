@@ -4,7 +4,7 @@ import subprocess
 from venv import EnvBuilder
 from pathlib import Path
 with open("config.json","r") as json_file:
-    FILE = json.loads(json_file)
+    FILE = json.load(json_file)
 
 
 ipaddress  = FILE["ip"]
