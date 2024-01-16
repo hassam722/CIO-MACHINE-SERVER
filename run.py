@@ -1,11 +1,14 @@
-import sys,os,socket
-from CIO_MACHINE_SERVER import settings
+import sys,os,json
+# from CIO_MACHINE_SERVER import settings
 import subprocess
 from venv import EnvBuilder
 from pathlib import Path
+with open("config.json","r") as json_file:
+    FILE = json.loads(json_file)
 
-ipaddress  = socket.gethostbyname(socket.gethostname())
-port = 3003
+
+ipaddress  = FILE["ip"]
+port = FILE["port"]
 
 curr_dir = os.getcwd()
 
@@ -13,7 +16,7 @@ def run_server(daphne_path):
     python_path = curr_dir+"\\venv\\Scripts\\python.exe"
     print("URI  "+ipaddress+":"+port )
     print("Here is server URI to connect the machine with server.")
-    settings.ALLOWED_HOSTS.append(ipaddress)
+    # settings.ALLOWED_HOSTS.append(ipaddress)
     subprocess.run([python_path,daphne_path, '-b',ipaddress,'-p',str(port),"CIO_MACHINE_SERVER.asgi:application"], check=True)    
 
 class CustomEnvBuilder(EnvBuilder):
