@@ -10,6 +10,8 @@ curr_dir = os.getcwd()
 
 def run_server(daphne_path):
     python_path = curr_dir+"\\venv\\Scripts\\python.exe"
+    print("URI  "+ipaddress+":"+port )
+    print("Here is server URI to connect the machine with server.")
     subprocess.run([python_path,daphne_path, '-b',ipaddress,'-p',str(port),"CIO_MACHINE_SERVER.asgi:application"], check=True)    
 
 class CustomEnvBuilder(EnvBuilder):
@@ -25,8 +27,6 @@ class CustomEnvBuilder(EnvBuilder):
 
         # Additional packages to install in the virtual environment
         requirement_file = curr_dir + "\\requirements.txt"
-        
-        print("venv created")
         pip_path = curr_dir+"\\venv\\Scripts\\pip.exe"
         # Install additional packages using pip
         subprocess.run([pip_path, 'install',"-r",requirement_file], check=True)
@@ -40,11 +40,11 @@ if __name__ == "__main__":
     
     # Check if the virtual environment already exists
     if not (venv_path).is_dir():
-        print("Creating virtual environment...")
+        print("instlling depencdencies...")
         # Use CustomEnvBuilder to customize the virtual environment creation process
         builder = CustomEnvBuilder(with_pip=True)
         builder.create(venv_dir)
-        print("Virtual environment created.")
+        print("installed.")
     else:
         print("Virtual environment already exists.")
         daphne_path = curr_dir+"\\venv\\Scripts\\daphne.exe"
